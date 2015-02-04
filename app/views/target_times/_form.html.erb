@@ -1,0 +1,38 @@
+<%= form_for(@target_time) do |f| %>
+<% if @target_time.errors.any? %>
+<div id="error_explanation">
+	<h2><%= pluralize(@target_time.errors.count, "error") %> prohibited this target_time from being saved:</h2>
+
+	<ul>
+		<% @target_time.errors.full_messages.each do |message| %>
+		<li>
+			<%= message %>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+<div class="field">
+	<%= f.label :target_time %>
+	<br>
+	<% if @target_time.target_time == nil then %>
+	<%= f.time_select :target_time, :include_seconds => true, :include_blank =>true %>
+	<% else %>
+	<%= humanize(@target_time.target_time) %>
+	<% end %>
+</div>
+<div class="field">
+	<%= f.label :difficulty_id %>
+	<br>
+	<%= f.select(:difficulty_id, options_for_select(@difficulty.collect {|d| [d.name, d.id]}, @target_time.difficulty_id)) %>
+</div>
+<div class="field">
+	<%= f.label :player_count %>
+	<br>
+	<%= f.select(:player_count, options_for_select([1,2,3,4].collect {|d| d}, @target_time.player_count)) %>
+</div>
+<div class="actions">
+	<%= f.submit %>
+</div>
+<% end %>

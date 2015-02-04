@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Target Times</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Target time</th>
+      <th>Difficulty</th>
+      <th>Player count</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @target_times.each do |target_time| %>
+      <tr>
+        <td><%= humanize(target_time.target_time) %></td>
+        <td><%= get_difficulty_name(target_time.difficulty_id) %></td>
+        <td><%= target_time.player_count %></td>
+        <td><%= link_to 'Show', target_time %></td>
+        <td><%= link_to 'Edit', edit_target_time_path(target_time) %></td>
+        <td><%= link_to 'Destroy', target_time, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Target time', new_target_time_path %>

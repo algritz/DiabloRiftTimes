@@ -1,0 +1,112 @@
+<p id="notice">
+	<%= notice %>
+</p>
+
+<p>
+	<strong>Toon:</strong>
+	<%= get_toon_name(@run.toon_id) %>
+</p>
+
+<p>
+	<strong>Difficulty:</strong>
+	<%= get_difficulty_name(@run.difficulty_id) %>
+</p>
+
+<p>
+	<strong>Player count:</strong>
+	<%= @run.player_count %>
+</p>
+<p>
+	<strong>Duration:</strong>
+	<span class="<%= get_rating(@run.duration, @avg_duration_for_this_type) %>"> <%= humanize(@run.duration) %> </span>
+</p>
+<p>
+	<strong>Legendary Count:</strong>
+	<span class="<%= get_rating(@avg_legendary_count_for_this_type, @run.legendary_count) %>"><%= @run.legendary_count%></span>
+</p>
+<p>
+	<strong>Blood Shard Count:</strong>
+	<span class="<%= get_rating(@avg_blood_shard_count_for_this_type, @run.blood_shard_count) %>"> <%= @run.blood_shard_count %> </span>
+</p>
+<p>
+	<strong>Duration Full Clear:</strong>
+	<span class="<%= get_rating(@run.duration_full_clear, @avg_duration_full_clear_for_this_type) %>"> <%= humanize(@run.duration_full_clear) %> </span>
+</p>
+<p>
+	<strong>Legendary Count Full Clear:</strong>
+	<span class="<%= get_rating(@avg_legendary_count_full_clear_for_this_type, @run.legendary_count_full_clear) %>"> <%= @run.legendary_count_full_clear %> </span>
+</p>
+<p>
+	<strong>Blood Shard Count Full Clear:</strong>
+	<span class="<%= get_rating(@avg_blood_shard_count_full_clear_for_this_type, @run.blood_shard_count_full_clear) %>"> <%= @run.blood_shard_count_full_clear %> </span>
+</p>
+<%= link_to 'Edit', edit_run_path(@run) %> |
+<%= link_to 'Back', runs_path %>
+<hr/>
+<br />
+<p>
+	<b>Averages of the last 10 Runs with relevant data</b>
+</p>
+<table>
+	<tr>
+		<th colspan="3">Up to Rift Guardian</th><th width="50"></th><th colspan="3">Full Clear</th>
+	</tr>
+	<tr>
+		<th>Average Time</th>
+		<th>Average Legendary</th>
+		<th>Average Blood Shard</th>
+		<th></th>
+		<th>Average Time</th>
+		<th>Average Legendary</th>
+		<th>Average Blood Shard</th>
+	</tr>
+	<tr>
+		<td><%= humanize(@avg_duration_for_this_type) %></td>
+		<td><%= @avg_legendary_count_for_this_type %></td>
+		<td><%= @avg_blood_shard_count_for_this_type %></td>
+		<td></td>
+		<td><%= humanize(@avg_duration_full_clear_for_this_type) %></td>
+		<td><%= @avg_legendary_count_full_clear_for_this_type %></td>
+		<td><%= @avg_blood_shard_count_full_clear_for_this_type %></td>
+	</tr>
+	<tr>
+		<th></th>
+		<th>Legendary per hour</th>
+		<th>Blood Shards per hour</th>
+		<th></th>
+		<th></th>
+		<th>Legendary per hour</th>
+		<th>Blood Shards per hour</th>
+	</tr>
+	<tr>
+		<td></td>
+		<td><%= @legendary_per_hour %></td>
+		<td><%= @blood_shard_per_hour %></td>
+		<td></td>
+		<td></td>
+		<td><%= @legendary_per_hour_full_clear%> </td>
+		<td><%= @blood_shard_per_hour_full_clear %></td>
+	</tr>
+</table>
+<br />
+<br />
+<p>
+	<b>Last 10 Similar Runs</b>
+</p>
+<table>
+	<tr>
+		<th>Duration</th><th>Legendary Count</th><th>Blood Shard Count</th><th></th><th>Duration</th/><th>Legendary Count </th><th>Blood Shard Count</th>
+	</tr>
+	<% @duration_for_this_type.each do |run| %>
+	<tr>
+		<td><%= humanize(run.duration) %></td>
+		<td><%= run.legendary_count %></td>
+		<td><%= run.blood_shard_count %></td>
+		<td></td>
+		<td><%= humanize(run.duration_full_clear) %></td>
+		<td><%= run.legendary_count_full_clear %></td>
+		<td><%= run.blood_shard_count_full_clear %></td>
+	</tr>
+
+	<% end %>
+</table>

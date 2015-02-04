@@ -1,0 +1,30 @@
+<%= form_for(@toon) do |f| %>
+<% if @toon.errors.any? %>
+<div id="error_explanation">
+	<h2><%= pluralize(@toon.errors.count, "error") %> prohibited this toon from being saved:</h2>
+
+	<ul>
+		<% @toon.errors.full_messages.each do |message| %>
+		<li>
+			<%= message %>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+<div class="field">
+	<%= f.label :name %>
+	<br>
+	<%= f.text_field :name %>
+</div>
+<div class="field">
+	<%= f.label :archetype %>
+	<br>
+	<%= f.select(:archetype_id, options_for_select(@archetypes.collect {|a| [a.name, a.id]}, @toon.archetype_id)) %>
+
+</div>
+<div class="actions">
+	<%= f.submit %>
+</div>
+<% end %>

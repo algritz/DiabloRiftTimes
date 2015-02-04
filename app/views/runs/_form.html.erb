@@ -1,0 +1,71 @@
+<%= form_for(@run) do |f| %>
+<% if @run.errors.any? %>
+<div id="error_explanation">
+	<h2><%= pluralize(@run.errors.count, "error") %> prohibited this run from being saved:</h2>
+
+	<ul>
+		<% @run.errors.full_messages.each do |message| %>
+		<li>
+			<%= message %>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+<div class="field">
+	<%= f.label :toon_id %>
+	<br>
+	<%= f.select(:toon_id, options_for_select(@toons.collect {|t| [t.name, t.id]}, @run.toon_id)) %>
+</div>
+<div class="field">
+	<%= f.label :difficulty_id %>
+	<br>
+	<%= f.select(:difficulty_id, options_for_select(@difficulty.collect {|d| [d.name, d.id]}, @run.difficulty_id)) %>
+</div>
+<div class="field">
+	<%= f.label :player_count %>
+	<br>
+	<%= f.select(:player_count, options_for_select([1,2,3,4].collect {|d| d}, @run.player_count)) %>
+</div>
+<div class="field">
+	<%= f.label :duration %>
+	<br>
+	<% if @run.duration == nil then %>
+	<%= f.time_select :duration, :include_seconds => true, :include_blank =>true %>
+	<% else %>
+	<%= humanize(@run.duration) %>
+	<% end %>
+</div>
+<div class="field">
+	<%= f.label :legendary_count %>
+	<br/ >
+		<%= f.number_field :legendary_count, :min => 0 %>
+</div>
+<div class="field">
+	<%= f.label :blood_shard_count %>
+	<br/ >
+		<%= f.number_field :blood_shard_count, :min => 0 %>
+</div>
+<div class="field">
+	<%= f.label :duration_full_clear %>
+	<br>
+	<% if @run.duration == nil then %>
+	<%= f.time_select :duration_full_clear, :include_seconds => true, :include_blank =>true %>
+	<% else %>
+	<%= humanize(@run.duration_full_clear) %>
+	<% end %>
+</div>
+<div class="field">
+	<%= f.label :legendary_count_full_clear %>
+	<br/ >
+		<%= f.number_field :legendary_count_full_clear, :min => 0 %>
+</div>
+<div class="field">
+	<%= f.label :blood_shard_count_full_clear %>
+	<br/ >
+		<%= f.number_field :blood_shard_count_full_clear, :min => 0 %>
+</div>
+<div class="actions">
+	<%= f.submit %>
+</div>
+<% end %>

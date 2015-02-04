@@ -1,0 +1,17 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @toon.name %>
+</p>
+<p>
+	<strong>Runs completed:</strong>
+	<%= @runs_for_toon %>
+</p>
+<p>
+	<strong>Legendaries so far:</strong>
+	<%= @legendaries_so_far %>
+</p>
+
+<%= link_to 'Edit', edit_toon_path(@toon) %> |
+<%= link_to 'Back', toons_path %>

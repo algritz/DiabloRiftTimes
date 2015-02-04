@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Target time:</strong>
+  <%= humanize(@target_time.target_time) %>
+</p>
+
+<p>
+  <strong>Difficulty:</strong>
+  <%= get_difficulty_name(@target_time.difficulty_id) %>
+</p>
+
+<p>
+  <strong>Player count:</strong>
+  <%= @target_time.player_count %>
+</p>
+
+<%= link_to 'Edit', edit_target_time_path(@target_time) %> |
+<%= link_to 'Back', target_times_path %>

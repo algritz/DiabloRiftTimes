@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  duration: 1
+  user_id: 1
+  toon_id: 1
+  difficulty_id: 1
+  player_count: 1
+
+two:
+  duration: 1
+  user_id: 1
+  toon_id: 1
+  difficulty_id: 1
+  player_count: 1
