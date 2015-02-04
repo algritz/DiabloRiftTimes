@@ -21,6 +21,7 @@ class ToonsController < ApplicationController
     @legendaries_so_far = legendary_count_array.inject{|sum,x| sum + x }
     respond_with(@toon)
   end
+  
 
   def new
     if !current_user

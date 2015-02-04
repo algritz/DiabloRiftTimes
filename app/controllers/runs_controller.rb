@@ -36,7 +36,7 @@ class RunsController < ApplicationController
     if legendary_count_array.count > 0 then
       @total_legendary_count = legendary_count_array.inject{|sum,x| sum + x }
       @avg_legendary_count_for_this_type = @total_legendary_count / legendary_count_array.count
-      @legendary_per_hour = (60 * @total_legendary_count) / @total_time
+      @legendary_per_hour = (3600 * @total_legendary_count) / @total_time
     else
       @avg_legendary_count_for_this_type = "N/A"
     end
@@ -56,7 +56,7 @@ class RunsController < ApplicationController
       @avg_blood_shard_count_for_this_type = "N/A"
     end
 
-    @blood_shard_per_hour = (60 * @total_blood_shard_count) / @total_time
+    @blood_shard_per_hour = (3600 * @total_blood_shard_count) / @total_time
 
     duration_full_clear_array = []
 
@@ -80,7 +80,7 @@ class RunsController < ApplicationController
       @total_legendary_count_full_clear = legendary_count_full_clear_array.inject{|sum,x| sum + x }
       @avg_legendary_count_full_clear_for_this_type = @total_legendary_count_full_clear / legendary_count_full_clear_array.count
       if @total_time_full_clear != 0 then
-        @legendary_per_hour_full_clear = (60 * @total_legendary_count_full_clear) / @total_time_full_clear
+        @legendary_per_hour_full_clear = (3600 * @total_legendary_count_full_clear) / @total_time_full_clear
       end
     else
       @avg_legendary_count_full_clear_for_this_type = "N/A"
@@ -96,7 +96,7 @@ class RunsController < ApplicationController
       @total_blood_shard_count_full_clear = blood_shard_count_full_clear_array.inject{|sum,x| sum + x }
       @avg_blood_shard_count_full_clear_for_this_type = @total_blood_shard_count_full_clear / blood_shard_count_full_clear_array.count
       if @total_time_full_clear != 0 then
-        @blood_shard_per_hour_full_clear = (60 * @total_blood_shard_count_full_clear) / @total_time_full_clear
+        @blood_shard_per_hour_full_clear = (3600 * @total_blood_shard_count_full_clear) / @total_time_full_clear
       end
     else
       @total_blood_shard_count_full_clear = 0
