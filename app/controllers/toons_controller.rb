@@ -28,8 +28,11 @@ class ToonsController < ApplicationController
       time_spent_in_rift_array << run.duration
     end
     @time_spent_in_rifts = time_spent_in_rift_array.inject{|sum,x| sum + x }
-
-    @overall_legendery_found_per_hour = (3600 * @legendaries_so_far) / @time_spent_in_rifts
+    if @legendaries_so_far != nil then
+      @overall_legendery_found_per_hour = (3600 * @legendaries_so_far) / @time_spent_in_rifts
+    else
+      @overall_legendery_found_per_hour = "N/A"
+    end
 
     rec_blood_shards_so_far = Run.where(["toon_id = ? and blood_shard_count is not null", params[:id]]).select("blood_shard_count")
     blood_shard_count_array = []
