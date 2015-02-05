@@ -1,9 +1,10 @@
 class RunsController < ApplicationController
+  before_action :signed_in?
   before_action :set_run, only: [:show, :edit, :update, :destroy]
   # GET /runs
   # GET /runs.json
   def index
-    @runs = Run.all
+    @runs = Run.where(["user_id = ?", current_user.id])
   end
 
   # GET /runs/1
@@ -40,8 +41,6 @@ class RunsController < ApplicationController
     else
       @avg_legendary_count_for_this_type = "N/A"
     end
-
-    
 
     blood_shard_count_array = []
     @blood_shard_count_for_this_type.each do |run|
@@ -168,6 +167,12 @@ class RunsController < ApplicationController
   end
 
   private
+
+  def signed_in?
+    if current_user == nil then
+      redirect_to(new_user_session_path)
+    end
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_run

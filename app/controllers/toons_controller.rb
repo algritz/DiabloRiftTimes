@@ -1,5 +1,8 @@
 class ToonsController < ApplicationController
+  
+  before_action :signed_in?
   before_action :set_toon, only: [:show, :edit, :update, :destroy]
+  
 
   respond_to :html
   def index
@@ -91,4 +94,11 @@ class ToonsController < ApplicationController
   def toon_params
     params.require(:toon).permit(:name, :archetype_id, :user_id)
   end
+  
+  def signed_in?
+    if current_user == nil then
+      redirect_to(new_user_session_path)
+    end
+  end
+  
 end

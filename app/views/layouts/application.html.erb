@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>DiabloRiftTimes</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-<%= link_to('Toons', toons_path) %> :: <%= link_to('Runs', runs_path) %>
-<%= yield %>
+	<head>
+		<title>DiabloRiftTimes</title>
+		<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+		<%= csrf_meta_tags %>
+	</head>
+	<body>
+		<%= link_to('Toons', toons_path) %> :: <%= link_to('Runs', runs_path) %> :: <% if user_signed_in? %>
 
-</body>
+		<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+
+		<% else %>
+
+		<%= link_to('Login', new_user_session_path)  %>
+
+		<% end %>
+		<%= yield %>
+
+	</body>
 </html>
