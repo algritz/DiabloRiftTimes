@@ -13,15 +13,40 @@ class ToonsController < ApplicationController
 
   def show
     @runs_for_toon = Run.where(["toon_id = ?", params[:id]]).count
+
     rec_legendaries_so_far = Run.where(["toon_id = ? and legendary_count is not null", params[:id]]).select("legendary_count")
     legendary_count_array = []
-    rec_legendaries_so_far.each do |legendary_count|
-      legendary_count_array << legendary_count.legendary_count
+    rec_legendaries_so_far.each do |run|
+      legendary_count_array << run.legendary_count
     end
     @legendaries_so_far = legendary_count_array.inject{|sum,x| sum + x }
+
+    rec_time_spent_in_rifts = Run.where(["toon_id = ?", params[:id]]).select("duration")
+    time_spent_in_rift_array = []
+    rec_time_spent_in_rifts.each do |run|
+      p run.duration
+      time_spent_in_rift_array << run.duration
+    end
+    @time_spent_in_rifts = time_spent_in_rift_array.inject{|sum,x| sum + x }
+
+    @overall_legendery_found_per_hour = (3600 * @legendaries_so_far) / @time_spent_in_rifts
+
+    rec_blood_shards_so_far = Run.where(["toon_id = ? and blood_shard_count is not null", params[:id]]).select("blood_shard_count")
+    blood_shard_count_array = []
+    rec_blood_shards_so_far.each do |run|
+      blood_shard_count_array << run.blood_shard_count
+    end
+    @blood_shards_so_far = blood_shard_count_array.inject{|sum,x| sum + x }
+
+    if @blood_shards_so_far != nil then
+      @overall_blood_shards_per_hour = (3600 * @blood_shards_so_far) / @time_spent_in_rifts
+    else
+      @overall_blood_shards_per_hour = "N/A"
+    end
+
     respond_with(@toon)
+
   end
-  
 
   def new
     if !current_user

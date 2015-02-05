@@ -1,17 +1,37 @@
-<p id="notice"><%= notice %></p>
+<p id="notice">
+	<%= notice %>
+</p>
 
 <p>
-  <strong>Name:</strong>
-  <%= @toon.name %>
+	<strong>Name:</strong>
+	<%= @toon.name %>
 </p>
 <p>
 	<strong>Runs completed:</strong>
 	<%= @runs_for_toon %>
 </p>
 <p>
+	<strong>Total time spent in rifts:</strong>
+	<%= humanize(@time_spent_in_rifts) %>
+</p>
+<p>
 	<strong>Legendaries so far:</strong>
 	<%= @legendaries_so_far %>
 </p>
+<p>
+	<strong>Legendaries per hour so far:</strong>
+	<%= @overall_legendery_found_per_hour %>
+</p>
+<p>
+	<strong>Blood shards so far:</strong>
+	<%= @blood_shards_so_far %>
+</p>
+
+<p>
+	<strong>Blood shards per hour so far:</strong>
+	<%= @overall_blood_shards_per_hour %>
+</p>
+
 
 <%= link_to 'Edit', edit_toon_path(@toon) %> |
 <%= link_to 'Back', toons_path %>
