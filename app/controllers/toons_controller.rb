@@ -1,57 +1,49 @@
+# Controller, where Character stats will be compiled in relation
+# to properties of each runs this specific character completed
 class ToonsController < ApplicationController
-
   before_action :signed_in?
   before_action :set_toon, only: [:show, :edit, :update, :destroy]
-  before_action :is_user_owner?, only: [:show, :edit, :update, :destroy]
+  before_action :user_owner?, only: [:show, :edit, :update, :destroy]
 
   respond_to :html
   def index
     if !current_user
       redirect_to new_user_session_path, notice: 'You are not logged in.'
     else
-      @toons = Toon.where(["user_id = ?", current_user.id]).order("name")
+      @toons = Toon.where(['user_id = ?', current_user.id]).order('name')
       respond_with(@toons)
     end
   end
 
   def show
-    @runs_for_toon = Run.where(["toon_id = ?", params[:id]]).count
+    @runs_for_toon = Run.where(['toon_id = ?', params[:id]]).count
 
-    rec_legendaries_so_far = Run.where(["toon_id = ? and legendary_count is not null", params[:id]]).select("legendary_count")
-    legendary_count_array = []
-    rec_legendaries_so_far.each do |run|
-      legendary_count_array << run.legendary_count
-    end
-    @legendaries_so_far = legendary_count_array.inject{|sum,x| sum + x }
+    rec_legendaries_so_far = Run.where(['toon_id = ? and
+                                         legendary_count is not null',
+                                        params[:id]]).select('id',
+                                                             'legendary_count')
 
-    rec_time_spent_in_rifts = Run.where(["toon_id = ?", params[:id]]).select("duration")
-    time_spent_in_rift_array = []
-    rec_time_spent_in_rifts.each do |run|
-      run.duration
-      time_spent_in_rift_array << run.duration
-    end
-    @time_spent_in_rifts = time_spent_in_rift_array.inject{|sum,x| sum + x }
-    if @legendaries_so_far != nil then
-      @overall_legendery_found_per_hour = (3600 * @legendaries_so_far) / @time_spent_in_rifts
-    else
-      @overall_legendery_found_per_hour = "N/A"
-    end
+    @leg_so_far = get_array_total(rec_legendaries_so_far, 'legendary_count')
 
-    rec_blood_shards_so_far = Run.where(["toon_id = ? and blood_shard_count is not null", params[:id]]).select("blood_shard_count")
-    blood_shard_count_array = []
-    rec_blood_shards_so_far.each do |run|
-      blood_shard_count_array << run.blood_shard_count
-    end
-    @blood_shards_so_far = blood_shard_count_array.inject{|sum,x| sum + x }
+    rec_time_spent_in_rifts = Run.where(['toon_id = ?',
+                                         params[:id]]).select('id', 'duration')
 
-    if @blood_shards_so_far != nil then
-      @overall_blood_shards_per_hour = (3600 * @blood_shards_so_far) / @time_spent_in_rifts
-    else
-      @overall_blood_shards_per_hour = "N/A"
-    end
+    @time_spent_in_rifts = get_array_total(rec_time_spent_in_rifts, 'duration')
+
+    @overall_leg_per_hour = (3600 * @leg_so_far) /
+                            @time_spent_in_rifts unless @leg_so_far.nil?
+
+    rec_blood_shards_so_far = Run.where(['toon_id = ? and
+                                          blood_shard_count is not null',
+                                         params[:id]]
+                                       ).select('blood_shard_count')
+
+    @bs_so_far = get_array_total(rec_blood_shards_so_far, 'blood_shard_count')
+
+    @overall_bs_per_hour = (3600 * @bs_so_far) /
+                           @time_spent_in_rifts unless @bs_so_far.nil?
 
     respond_with(@toon)
-
   end
 
   def new
@@ -59,13 +51,13 @@ class ToonsController < ApplicationController
       redirect_to new_user_session_path, notice: 'You are not logged in.'
     else
       @toon = Toon.new
-      @archetypes = Archetype.all.order("name")
+      @archetypes = Archetype.all.order('name')
       respond_with(@toon)
     end
   end
 
   def edit
-    @archetypes = Archetype.all.order("name")
+    @archetypes = Archetype.all.order('name')
   end
 
   def create
@@ -96,15 +88,12 @@ class ToonsController < ApplicationController
   end
 
   def signed_in?
-    if current_user == nil then
-      redirect_to(new_user_session_path)
-    end
-  end
-  
-  def is_user_owner?
-    if @toon.user_id != current_user.id then
-      redirect_to(toons_path, :notice => 'Only authorized users can access this page')
-    end
+    redirect_to(new_user_session_path) if current_user.nil?
   end
 
+  def user_owner?
+    redirect_to(toons_path,
+                notice: 'Only authorized users can access this page') if
+                                              @toon.user_id != current_user.id
+  end
 end

@@ -1,92 +1,120 @@
+# Main Controller, where stats will be compiled in relation
+# to properties of each run
 class RunsController < ApplicationController
   before_action :signed_in?
   before_action :set_run, only: [:show, :edit, :update, :destroy]
-  before_action :is_user_owner?, only: [:show, :edit, :update, :destroy]
+  before_action :user_owner?, only: [:show, :edit, :update, :destroy]
   # GET /runs
   # GET /runs.json
   def index
-    @runs = Run.where(["user_id = ?", current_user.id])
+    @runs = Run.where(['user_id = ?', current_user.id])
   end
 
   # GET /runs/1
   # GET /runs/1.json
   def show
-    @duration_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ?", @run.toon_id, @run.difficulty_id, @run.player_count]).last(10)
-    @legendary_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("id, legendary_count").last(10)
-    @blood_shard_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("id", "blood_shard_count").last(10)
-    @duration_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and duration_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select('id', 'duration_full_clear').last(10)
-    @legendary_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("legendary_count_full_clear").last(10)
-    @blood_shard_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("blood_shard_count_full_clear").last(10)
+    @duration = Run.where(['toon_id = ? and
+                            difficulty_id = ? and
+                            player_count = ?',
+                           @run.toon_id,
+                           @run.difficulty_id,
+                           @run.player_count]
+                         ).last(10)
+    @leg_count = Run.where(['toon_id = ? and
+                             difficulty_id = ? and
+                             player_count = ? and
+                             legendary_count is not null',
+                            @run.toon_id,
+                            @run.difficulty_id,
+                            @run.player_count]
+                          ).select('id, legendary_count').last(10)
+    @bs_count = Run.where(['toon_id = ? and
+                            difficulty_id = ? and
+                            player_count = ? and
+                            blood_shard_count is not null',
+                           @run.toon_id,
+                           @run.difficulty_id,
+                           @run.player_count]
+                                   ).select('id', 'blood_shard_count').last(10)
+    @duration_fc = Run.where(['toon_id = ? and
+                               difficulty_id = ? and
+                               player_count = ? and
+                               duration_full_clear is not null',
+                              @run.toon_id,
+                              @run.difficulty_id,
+                              @run.player_count]
+                                  ).select('id', 'duration_full_clear').last(10)
+    @leg_count_fc = Run.where(['toon_id = ? and
+                                difficulty_id = ?
+                                and player_count = ?
+                                and legendary_count_full_clear is not null',
+                               @run.toon_id,
+                               @run.difficulty_id,
+                               @run.player_count]
+                          ).select('id', 'legendary_count_full_clear').last(10)
+    @bs_count_fc = Run.where(['toon_id = ? and
+                               difficulty_id = ? and
+                               player_count = ? and
+                               blood_shard_count_full_clear is not null',
+                              @run.toon_id,
+                              @run.difficulty_id,
+                              @run.player_count]
+                         ).select('id', 'blood_shard_count_full_clear').last(10)
 
-    @total_time = get_array_total(@duration_for_this_type, "duration")
-    @avg_duration_for_this_type = @total_time / @duration_for_this_type.count
+    @total_time = get_array_total(@duration, 'duration')
 
-    @total_legendary_count = get_array_total(@legendary_count_for_this_type, "legendary_count")
-    if @legendary_count_for_this_type.count > 0 then
-      @avg_legendary_count_for_this_type = @total_time / @legendary_count_for_this_type.count
-    else
-      @avg_legendary_count_for_this_type = 0
-    end
+    @avg_duration = @total_time / @duration.count
 
-    @total_blood_shard_count = get_array_total(@blood_shard_count_for_this_type, "blood_shard_count")
-    if @blood_shard_count_for_this_type.count > 0 then
-      @avg_blood_shard_count_for_this_type = @total_blood_shard_count / @blood_shard_count_for_this_type.count
-    else
-      @avg_blood_shard_count_for_this_type = 0
-    end
+    @total_leg_count = get_array_total(@leg_count, 'legendary_count')
 
-    @total_time_full_clear = get_array_total(@duration_full_clear_for_this_type, 'duration_full_clear')
-    if @duration_full_clear_for_this_type.count > 0 then
-      @avg_duration_full_clear_for_this_type = @total_time_full_clear / @duration_full_clear_for_this_type.count
-    else
-      @avg_duration_full_clear_for_this_type = 0
-    end
+    @avg_leg_count = @total_leg_count / @leg_count.count if @leg_count.count > 0
 
-    legendary_count_full_clear_array = []
-    @legendary_count_full_clear_for_this_type.each do |run|
-      legendary_count_full_clear_array << run.legendary_count_full_clear
-    end
-    if legendary_count_full_clear_array.count > 0 then
-      @total_legendary_count_full_clear = legendary_count_full_clear_array.inject{|sum,x| sum + x }
-      @avg_legendary_count_full_clear_for_this_type = @total_legendary_count_full_clear / legendary_count_full_clear_array.count
-      if @total_time_full_clear != 0 then
-        @legendary_per_hour_full_clear = (3600 * @total_legendary_count_full_clear) / @total_time_full_clear
-      end
-    else
-      @avg_legendary_count_full_clear_for_this_type = "N/A"
-      @legendary_per_hour_full_clear = "N/A"
-    end
+    @leg_per_hour =  (@total_leg_count * 3600) / @total_time if
+                                  !@total_leg_count.nil? && @total_leg_count > 0
 
-    blood_shard_count_full_clear_array = []
-    @blood_shard_count_full_clear_for_this_type.each do |run|
-      blood_shard_count_full_clear_array << run.blood_shard_count_full_clear
-    end
+    @total_bs_count = get_array_total(@bs_count, 'blood_shard_count')
 
-    if blood_shard_count_full_clear_array.count > 0 then
-      @total_blood_shard_count_full_clear = blood_shard_count_full_clear_array.inject{|sum,x| sum + x }
-      @avg_blood_shard_count_full_clear_for_this_type = @total_blood_shard_count_full_clear / blood_shard_count_full_clear_array.count
-      if @total_time_full_clear != 0 then
-        @blood_shard_per_hour_full_clear = (3600 * @total_blood_shard_count_full_clear) / @total_time_full_clear
-      end
-    else
-      @total_blood_shard_count_full_clear = 0
-      @avg_blood_shard_count_full_clear_for_this_type = "N/A"
-      @blood_shard_per_hour_full_clear = "N/A"
-    end
+    @avg_bs_count = @total_bs_count / @bs_count.count if
+                                                      @bs_count.count > 0
 
+    @bs_per_hour =  (@total_bs_count * 3600) / @total_time if
+                                    !@total_bs_count.nil? && @total_bs_count > 0
+
+    @total_time_fc = get_array_total(@duration_fc, 'duration_full_clear')
+
+    @avg_duration_fc = @total_time_fc / @duration_fc.count if
+                                                          @duration_fc.count > 0
+
+    @total_leg_count_fc = get_array_total(@leg_count_fc,
+                                          'legendary_count_full_clear')
+
+    @avg_leg_count_fc = @total_leg_count_fc / @leg_count_fc.count if
+                                                         @leg_count_fc.count > 0
+
+    @leg_per_hour_fc =  (@total_leg_count_fc * 3600) / @total_time_fc if
+                           !@total_leg_count_fc.nil? && @total_leg_count_fc > 0
+
+    @total_bs_count_fc = get_array_total(@bs_count_fc,
+                                         'blood_shard_count_full_clear')
+
+    @avg_bs_count_fc = @total_bs_count_fc / @bs_count_fc.count if
+                                                          @bs_count_fc.count > 0
+
+    @bs_per_hour_fc =  (@total_bs_count_fc * 3600) / @total_time_fc if
+                           !@total_bs_count_fc.nil? && @total_bs_count_fc > 0
   end
 
   # GET /runs/new
   def new
-    @toons = Toon.where(["user_id = ?", current_user.id]).order("name")
-    @difficulty = Difficulty.all.order("id")
+    @toons = Toon.where(['user_id = ?', current_user.id]).order('name')
+    @difficulty = Difficulty.all.order('id')
     @run = Run.new
   end
 
   # GET /runs/1/edit
   def edit
-    @toons = Toon.where(["user_id = ?", current_user.id]).order("name")
-    @difficulty = Difficulty.all.order("id")
+    @toons = Toon.where(['user_id = ?', current_user.id]).order('name')
+    @difficulty = Difficulty.all.order('id')
   end
 
   # POST /runs
@@ -94,17 +122,15 @@ class RunsController < ApplicationController
   def create
     @run = Run.new(run_params)
     @run.user_id = current_user.id
-    minutes_duration = run_params["duration(5i)"].to_i
-    seconds_duration = run_params["duration(6i)"].to_i
-    total_duration = (minutes_duration * 60) + seconds_duration
-    @run.duration = total_duration
-    minutes_duration_full_clear = run_params["duration_full_clear(5i)"].to_i
-    seconds_duration_full_clear = run_params["duration_full_clear(6i)"].to_i
-    total_duration_full_clear = (minutes_duration_full_clear * 60) + seconds_duration_full_clear
-    @run.duration_full_clear = total_duration_full_clear
+    @run.duration = convert_to_seconds(run_params, 'duration')
+    @run.duration_full_clear = convert_to_seconds(run_params,
+                                                  'duration_full_clear')
     respond_to do |format|
       if @run.save
-        format.html { redirect_to @run, notice: 'Run was successfully created.' }
+        format.html do
+          redirect_to @run,
+                      notice: 'Run was successfully created.'
+        end
         format.json { render :show, status: :created, location: @run }
       else
         format.html { render :new }
@@ -118,7 +144,9 @@ class RunsController < ApplicationController
   def update
     respond_to do |format|
       if @run.update(run_params)
-        format.html { redirect_to @run, notice: 'Run was successfully updated.' }
+        format.html do
+          redirect_to @run, notice: 'Run was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @run }
       else
         format.html { render :edit }
@@ -132,25 +160,32 @@ class RunsController < ApplicationController
   def destroy
     @run.destroy
     respond_to do |format|
-      format.html { redirect_to runs_url, notice: 'Run was successfully destroyed.' }
+      format.html do
+        redirect_to runs_url,
+                    notice: 'Run was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
 
   private
 
-  # make sure the user is signed in, don't want lurkers here
-  def signed_in?
-    if current_user == nil then
-      redirect_to(new_user_session_path)
-    end
+  def convert_to_seconds(run_params, property)
+    minutes_duration = run_params["#{property}(5i)"].to_i
+    seconds_duration = run_params["#{property}(6i)"].to_i
+    (minutes_duration * 60) + seconds_duration
   end
 
-  #make sure users can only see their stuff, unless they are admins
-  def is_user_owner?
-    if @run.user_id != current_user.id then
-      redirect_to(runs_path, :notice => 'Only authorized users can access this page')
-    end
+  # make sure the user is signed in, don't want lurkers here
+  def signed_in?
+    redirect_to(new_user_session_path) if current_user.nil?
+  end
+
+  # make sure users can only see their stuff, unless they are admins
+  def user_owner?
+    redirect_to(runs_path,
+                notice: 'Only authorized users can access this page') if
+                @run.user_id != current_user.id
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -158,8 +193,18 @@ class RunsController < ApplicationController
     @run = Run.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from the scary internet,
+  # only allow the white list through.
   def run_params
-    params.require(:run).permit(:duration, :legendary_count, :blood_shard_count, :duration_full_clear, :legendary_count_full_clear, :blood_shard_count_full_clear, :user_id, :toon_id, :difficulty_id, :player_count)
+    params.require(:run).permit(:duration,
+                                :legendary_count,
+                                :blood_shard_count,
+                                :duration_full_clear,
+                                :legendary_count_full_clear,
+                                :blood_shard_count_full_clear,
+                                :user_id,
+                                :toon_id,
+                                :difficulty_id,
+                                :player_count)
   end
 end
