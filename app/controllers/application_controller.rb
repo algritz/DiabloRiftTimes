@@ -8,14 +8,9 @@ class ApplicationController < ActionController::Base
     rec_of_element_array = []
     total_of_element = ""
     rec_of_element.each do |element|
-      case property
-      when "duration"
-        rec_of_element_array << element.duration
-      when "legendary_count"
-        rec_of_element_array << element.legendary_count
-      end
+      rec_of_element_array << element[property]
     end
-   p total_of_elements = rec_of_element_array.inject{|sum,x| sum + x }
+    total_of_elements = rec_of_element_array.inject{|sum,x| sum + x }
   end
 
   def set_archetype

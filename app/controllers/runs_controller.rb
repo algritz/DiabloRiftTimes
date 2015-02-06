@@ -13,8 +13,8 @@ class RunsController < ApplicationController
   def show
     @duration_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ?", @run.toon_id, @run.difficulty_id, @run.player_count]).last(10)
     @legendary_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("id, legendary_count").last(10)
-    @blood_shard_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("blood_shard_count").last(10)
-    @duration_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and duration_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("duration_full_clear").last(10)
+    @blood_shard_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("id", "blood_shard_count").last(10)
+    @duration_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and duration_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select('id', 'duration_full_clear').last(10)
     @legendary_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("legendary_count_full_clear").last(10)
     @blood_shard_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("blood_shard_count_full_clear").last(10)
 
@@ -22,36 +22,24 @@ class RunsController < ApplicationController
     @avg_duration_for_this_type = @total_time / @duration_for_this_type.count
 
     @total_legendary_count = get_array_total(@legendary_count_for_this_type, "legendary_count")
-
-    @avg_legendary_count_for_this_type = @total_time / @legendary_count_for_this_type.count
-
-    blood_shard_count_array = []
-    @blood_shard_count_for_this_type.each do |run|
-      blood_shard_count_array << run.blood_shard_count
-    end
-
-    if blood_shard_count_array.count > 0 then
-      @total_blood_shard_count = blood_shard_count_array.inject{|sum,x| sum + x }
-      @avg_blood_shard_count_for_this_type = @total_blood_shard_count / blood_shard_count_array.count
+    if @legendary_count_for_this_type.count > 0 then
+      @avg_legendary_count_for_this_type = @total_time / @legendary_count_for_this_type.count
     else
-      @total_blood_shard_count = 0
-      @avg_blood_shard_count_for_this_type = "N/A"
+      @avg_legendary_count_for_this_type = 0
     end
 
-    @blood_shard_per_hour = (3600 * @total_blood_shard_count) / @total_time
-
-    duration_full_clear_array = []
-
-    @duration_full_clear_for_this_type.each do |run|
-      duration_full_clear_array << run.duration_full_clear
-    end
-
-    if duration_full_clear_array.count > 0 then
-      @total_time_full_clear = duration_full_clear_array.inject{|sum,x| sum + x }
-      @avg_duration_full_clear_for_this_type = @total_time_full_clear / duration_full_clear_array.count
+    @total_blood_shard_count = get_array_total(@blood_shard_count_for_this_type, "blood_shard_count")
+    if @blood_shard_count_for_this_type.count > 0 then
+      @avg_blood_shard_count_for_this_type = @total_blood_shard_count / @blood_shard_count_for_this_type.count
     else
-      @total_time_full_clear = 0
-      @avg_duration_full_clear_for_this_type = "N/A"
+      @avg_blood_shard_count_for_this_type = 0
+    end
+
+    @total_time_full_clear = get_array_total(@duration_full_clear_for_this_type, 'duration_full_clear')
+    if @duration_full_clear_for_this_type.count > 0 then
+      @avg_duration_full_clear_for_this_type = @total_time_full_clear / @duration_full_clear_for_this_type.count
+    else
+      @avg_duration_full_clear_for_this_type = 0
     end
 
     legendary_count_full_clear_array = []

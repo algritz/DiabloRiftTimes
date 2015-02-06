@@ -27,7 +27,7 @@ class ToonsController < ApplicationController
     rec_time_spent_in_rifts = Run.where(["toon_id = ?", params[:id]]).select("duration")
     time_spent_in_rift_array = []
     rec_time_spent_in_rifts.each do |run|
-      p run.duration
+      run.duration
       time_spent_in_rift_array << run.duration
     end
     @time_spent_in_rifts = time_spent_in_rift_array.inject{|sum,x| sum + x }
