@@ -1,6 +1,7 @@
 class RunsController < ApplicationController
   before_action :signed_in?
   before_action :set_run, only: [:show, :edit, :update, :destroy]
+  before_action :is_user_owner?, only: [:show, :edit, :update, :destroy]
   # GET /runs
   # GET /runs.json
   def index
@@ -11,36 +12,18 @@ class RunsController < ApplicationController
   # GET /runs/1.json
   def show
     @duration_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ?", @run.toon_id, @run.difficulty_id, @run.player_count]).last(10)
-    @legendary_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("legendary_count").last(10)
+    @legendary_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("id, legendary_count").last(10)
     @blood_shard_count_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("blood_shard_count").last(10)
     @duration_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and duration_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("duration_full_clear").last(10)
     @legendary_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and legendary_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("legendary_count_full_clear").last(10)
     @blood_shard_count_full_clear_for_this_type = Run.where(["toon_id = ? and difficulty_id = ? and player_count = ? and blood_shard_count_full_clear is not null", @run.toon_id, @run.difficulty_id, @run.player_count]).select("blood_shard_count_full_clear").last(10)
 
-    duration_array = []
+    @total_time = get_array_total(@duration_for_this_type, "duration")
+    @avg_duration_for_this_type = @total_time / @duration_for_this_type.count
 
-    @duration_for_this_type.each do |run|
-      duration_array << run.duration
-    end
+    @total_legendary_count = get_array_total(@legendary_count_for_this_type, "legendary_count")
 
-    if duration_array.count > 0 then
-      @total_time = duration_array.inject{|sum,x| sum + x }
-      @avg_duration_for_this_type = @total_time / duration_array.count
-    else
-      @avg_duration_for_this_type = "N/A"
-    end
-
-    legendary_count_array = []
-    @legendary_count_for_this_type.each do |run|
-      legendary_count_array << run.legendary_count
-    end
-    if legendary_count_array.count > 0 then
-      @total_legendary_count = legendary_count_array.inject{|sum,x| sum + x }
-      @avg_legendary_count_for_this_type = @total_legendary_count / legendary_count_array.count
-      @legendary_per_hour = (3600 * @total_legendary_count) / @total_time
-    else
-      @avg_legendary_count_for_this_type = "N/A"
-    end
+    @avg_legendary_count_for_this_type = @total_time / @legendary_count_for_this_type.count
 
     blood_shard_count_array = []
     @blood_shard_count_for_this_type.each do |run|
@@ -168,9 +151,17 @@ class RunsController < ApplicationController
 
   private
 
+  # make sure the user is signed in, don't want lurkers here
   def signed_in?
     if current_user == nil then
       redirect_to(new_user_session_path)
+    end
+  end
+
+  #make sure users can only see their stuff, unless they are admins
+  def is_user_owner?
+    if @run.user_id != current_user.id then
+      redirect_to(runs_path, :notice => 'Only authorized users can access this page')
     end
   end
 

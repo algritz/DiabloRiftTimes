@@ -1,6 +1,6 @@
 class DifficultiesController < ApplicationController
+  before_action :is_admin?
   before_action :set_difficulty, only: [:show, :edit, :update, :destroy]
-
   # GET /difficulties
   # GET /difficulties.json
   def index
@@ -62,13 +62,14 @@ class DifficultiesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_difficulty
-      @difficulty = Difficulty.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def difficulty_params
-      params.require(:difficulty).permit(:name)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_difficulty
+    @difficulty = Difficulty.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def difficulty_params
+    params.require(:difficulty).permit(:name)
+  end
 end

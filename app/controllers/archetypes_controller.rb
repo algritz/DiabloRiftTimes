@@ -1,8 +1,9 @@
 class ArchetypesController < ApplicationController
+  before_action :is_admin?
   before_action :set_archetype, only: [:show, :edit, :update, :destroy]
+  
 
   respond_to :html
-
   def index
     @archetypes = Archetype.all.order("name")
     respond_with(@archetypes)
@@ -37,11 +38,5 @@ class ArchetypesController < ApplicationController
   end
 
   private
-    def set_archetype
-      @archetype = Archetype.find(params[:id])
-    end
 
-    def archetype_params
-      params.require(:archetype).permit(:name)
-    end
 end

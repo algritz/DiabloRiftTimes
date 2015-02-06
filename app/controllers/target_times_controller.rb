@@ -1,4 +1,5 @@
 class TargetTimesController < ApplicationController
+  before_action :is_admin?
   before_action :set_target_time, only: [:show, :edit, :update, :destroy]
   # GET /target_times
   # GET /target_times.json
