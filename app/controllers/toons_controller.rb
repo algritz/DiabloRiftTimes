@@ -1,5 +1,8 @@
-# Controller, where Character stats will be compiled in relation
-# to properties of each runs this specific character completed
+# Toons Controller, handles the CRUD operation to the Toon Model
+# Each Toon represents a character owned by a player
+# this class is what will allow players to distinguish each of their characters
+# should they try to track data for more than one Toon 
+
 class ToonsController < ApplicationController
   before_action :signed_in?
   before_action :set_toon, only: [:show, :edit, :update, :destroy]

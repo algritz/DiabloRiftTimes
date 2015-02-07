@@ -1,5 +1,7 @@
+# Difficulty Controller, handles the CRUD operation to the Difficulty Model
+# Each Difficulty represents a Difficulty level in Diablo III
 class DifficultiesController < ApplicationController
-  before_action :is_admin?
+  before_action :admin?
   before_action :set_difficulty, only: [:show, :edit, :update, :destroy]
   # GET /difficulties
   # GET /difficulties.json
@@ -28,11 +30,17 @@ class DifficultiesController < ApplicationController
 
     respond_to do |format|
       if @difficulty.save
-        format.html { redirect_to @difficulty, notice: 'Difficulty was successfully created.' }
+        format.html do
+          redirect_to @difficulty,
+                      notice: 'Difficulty was successfully created.'
+        end
         format.json { render :show, status: :created, location: @difficulty }
       else
         format.html { render :new }
-        format.json { render json: @difficulty.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @difficulty.errors,
+                 status: :unprocessable_entity
+        end
       end
     end
   end
@@ -42,11 +50,17 @@ class DifficultiesController < ApplicationController
   def update
     respond_to do |format|
       if @difficulty.update(difficulty_params)
-        format.html { redirect_to @difficulty, notice: 'Difficulty was successfully updated.' }
+        format.html do
+          redirect_to @difficulty,
+                      notice: 'Difficulty was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @difficulty }
       else
         format.html { render :edit }
-        format.json { render json: @difficulty.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @difficulty.errors,
+                 status: :unprocessable_entity
+        end
       end
     end
   end
@@ -56,7 +70,10 @@ class DifficultiesController < ApplicationController
   def destroy
     @difficulty.destroy
     respond_to do |format|
-      format.html { redirect_to difficulties_url, notice: 'Difficulty was successfully destroyed.' }
+      format.html do
+        redirect_to difficulties_url,
+                    notice: 'Difficulty was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
@@ -68,7 +85,8 @@ class DifficultiesController < ApplicationController
     @difficulty = Difficulty.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from the scary internet,
+  # only allow the white list through.
   def difficulty_params
     params.require(:difficulty).permit(:name)
   end

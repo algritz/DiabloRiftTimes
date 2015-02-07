@@ -17,40 +17,33 @@ module ApplicationHelper
     if num == 1
       'Solo'
     else
-    num
+      num
     end
   end
 
   def humanize(secs)
-    if !secs.nil? && secs.class == Fixnum
-      [
-        [60, :seconds], \
-        [60, :minutes], \
-        [24, :hours], \
-        [1000, :days]\
-      ].map do |count, name|
-        if secs > 0
-          secs, n = secs.divmod(count)
-          "#{n.to_i} #{name}"
-        end
-      end.compact.reverse.join(' ')
-    else
-      'N/A'
-    end
+    return if secs.nil?
+    [
+      [60, :seconds],
+      [60, :minutes],
+      [24, :hours],
+      [1000, :days]
+    ].map do |count, name|
+      if secs > 0
+        secs, n = secs.divmod(count)
+        "#{n.to_i} #{name}"
+      end
+    end.compact.reverse.join(' ')
   end
 
   def get_rating(result, target)
-    if result && !target.nil?
-      if result <= target
-        'green'
-      else
-        'red'
-      end
-    end
+    return if target.nil?
+    return if result.nil?
+    return 'green' if result < target
+    return 'red' if result > target
   end
 
-  def is_admin?
+  def admin?
     current_user.admin
   end
-
 end

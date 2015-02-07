@@ -1,11 +1,12 @@
+# Archetype Controller, handles the CRUD operation to the Archetype Model
+# Each Archetype represents a character class in Diablo III
 class ArchetypesController < ApplicationController
-  before_action :is_admin?
+  before_action :admin?
   before_action :set_archetype, only: [:show, :edit, :update, :destroy]
-  
 
   respond_to :html
   def index
-    @archetypes = Archetype.all.order("name")
+    @archetypes = Archetype.all.order('name')
     respond_with(@archetypes)
   end
 
@@ -38,5 +39,4 @@ class ArchetypesController < ApplicationController
   end
 
   private
-
 end

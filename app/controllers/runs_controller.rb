@@ -1,5 +1,7 @@
-# Main Controller, where stats will be compiled in relation
-# to properties of each run
+# Runs Controller, handles the CRUD operation to the Run Model
+# Each Runs represents a rift that was completed by the player
+# this class is the backbone of the application, this is where most of the
+# analytics will be drawn from
 class RunsController < ApplicationController
   before_action :signed_in?
   before_action :set_run, only: [:show, :edit, :update, :destroy]
@@ -169,12 +171,6 @@ class RunsController < ApplicationController
   end
 
   private
-
-  def convert_to_seconds(run_params, property)
-    minutes_duration = run_params["#{property}(5i)"].to_i
-    seconds_duration = run_params["#{property}(6i)"].to_i
-    (minutes_duration * 60) + seconds_duration
-  end
 
   # make sure the user is signed in, don't want lurkers here
   def signed_in?

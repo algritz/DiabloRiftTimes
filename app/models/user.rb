@@ -1,7 +1,6 @@
-# Will hold the user account informations
+# User Model: holds the user account informations
 # These informations will be used to segregate the data
 # from a user to another
-
 # == Schema Information
 #
 # Table name: users
@@ -19,7 +18,9 @@
 #  last_sign_in_ip        :string
 #  created_at             :datetime
 #  updated_at             :datetime
+#  admin                  :boolean
 #
+
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

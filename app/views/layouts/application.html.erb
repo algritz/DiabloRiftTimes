@@ -9,7 +9,7 @@
 	<body>
 		<% if user_signed_in? %>
 		<%= link_to('Toons', toons_path) %> :: <%= link_to('Runs', runs_path) %> ::
-		<% if is_admin? then %>
+		<% if admin? then %>
 		<%= link_to('Difficulties', difficulties_path) %> ::
 		<%= link_to('Archetypes', archetypes_path) %> ::
 		<% end %>

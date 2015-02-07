@@ -36,6 +36,8 @@ gem 'devise'
 # gem 'unicorn'
 gem 'puma'
 
+gem 'rails_12factor'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
