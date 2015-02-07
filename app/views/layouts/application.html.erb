@@ -10,8 +10,9 @@
 		<% if user_signed_in? %>
 		<%= link_to('Toons', toons_path) %> :: <%= link_to('Runs', runs_path) %> ::
 		<% if admin? then %>
-		<%= link_to('Difficulties', difficulties_path) %> ::
 		<%= link_to('Archetypes', archetypes_path) %> ::
+		<%= link_to('Difficulties', difficulties_path) %> ::
+		<%= link_to('Target Times', target_times_path) %> ::
 		<% end %>
 		<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
 		<% else %>
