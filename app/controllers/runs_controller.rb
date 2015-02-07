@@ -41,7 +41,7 @@ class RunsController < ApplicationController
     @duration_fc = Run.where(['toon_id = ? and
                                difficulty_id = ? and
                                player_count = ? and
-                               duration_full_clear is not null',
+                               duration_full_clear > 0',
                               @run.toon_id,
                               @run.difficulty_id,
                               @run.player_count]
