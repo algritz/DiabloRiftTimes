@@ -9,7 +9,37 @@ class RunsController < ApplicationController
   # GET /runs
   # GET /runs.json
   def index
-    @runs = Run.where(['user_id = ?', current_user.id])
+    @toons = Toon.where(['user_id = ?', current_user.id]).select('id, name')
+    @difficulties = Difficulty.all.order('id')
+
+    return @runs = Run.where(['user_id = ?',
+                              current_user.id]).order('difficulty_id desc,
+                                toon_id') if
+                                (params[:context].nil? ||
+                                params[:context].to_i == 0) &&
+                                (params[:difficulty].nil? ||
+                                params[:difficulty].to_i == 0)
+    return @runs = Run.where(['toon_id = ?',
+                              params[:context]]).order('difficulty_id desc') if
+                               (!params[:context].nil? &&
+                               params[:context].to_i > 0) &&
+                               (params[:difficulty].nil? ||
+                               params[:difficulty].to_i == 0)
+    return @runs = Run.where(['toon_id = ? and difficulty_id = ?',
+                              params[:context],
+                              params[:difficulty]]).order('difficulty_id desc') if
+                            (!params[:context].nil? &&
+                            params[:context].to_i > 0) &&
+                            (!params[:difficulty].nil? ||
+                            params[:difficulty].to_i > 0)
+    return @runs = Run.where(['user_id = ? and difficulty_id = ?',
+                              current_user.id,
+                              params[:difficulty]]).order('difficulty_id desc,
+                              toon_id') if
+                              (params[:context].nil? ||
+                              params[:context].to_i == 0) &&
+                              (!params[:difficulty].nil? ||
+                              params[:difficulty].to_i > 0)
   end
 
   # GET /runs/1
@@ -201,6 +231,7 @@ class RunsController < ApplicationController
                                 :user_id,
                                 :toon_id,
                                 :difficulty_id,
-                                :player_count)
+                                :player_count,
+                                :context)
   end
 end

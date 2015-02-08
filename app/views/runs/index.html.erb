@@ -4,7 +4,16 @@
 
 <h1>Listing Runs</h1>
 
-<table>
+Filter Runs:
+<%= form_tag runs_path , :method => 'get' do  %>
+<%= select_tag(:context, options_for_select(@toons.collect {|t| [t.name, t.id]}), :include_blank => true) %>
+<%= select_tag(:difficulty, options_for_select(@difficulties.collect {|t| [t.name, t.id]}), :include_blank => true) %>
+<%= submit_tag('Filter', :name => nil)%>
+<% end %>
+<p>
+	<%= link_to 'New Run', new_run_path %>
+</p>
+<table width="1440">
 	<thead>
 		<tr>
 			<th width="125">Toon</th>
@@ -40,6 +49,3 @@
 	</tbody>
 </table>
 
-<br>
-
-<%= link_to 'New Run', new_run_path %>
