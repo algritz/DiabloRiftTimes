@@ -18,7 +18,11 @@
 </p>
 <p>
 	<strong>Duration:</strong>
-	<span class="<%= get_rating(@run.duration, @avg_duration) %>"> <%= humanize(@run.duration) %> </span>
+	<span class="<%= get_rating(@run.duration, @target_time.target_time) %>"> <%= humanize(@run.duration) %> </span>
+</p>
+<p>
+	<b>Target:</b>
+	<%= humanize(@target_time.target_time) %>
 </p>
 <p>
 	<strong>Legendary Count:</strong>

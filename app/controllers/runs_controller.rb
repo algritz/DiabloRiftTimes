@@ -26,8 +26,8 @@ class RunsController < ApplicationController
                                (params[:difficulty].nil? ||
                                params[:difficulty].to_i == 0)
     return @runs = Run.where(['toon_id = ? and difficulty_id = ?',
-                              params[:context],
-                              params[:difficulty]]).order('difficulty_id desc') if
+                            params[:context],
+                            params[:difficulty]]).order('difficulty_id desc') if
                             (!params[:context].nil? &&
                             params[:context].to_i > 0) &&
                             (!params[:difficulty].nil? ||
@@ -96,7 +96,12 @@ class RunsController < ApplicationController
     @total_time = get_array_total(@duration, 'duration')
 
     @avg_duration = @total_time / @duration.count
-
+    
+    @target_time = TargetTime.where(['player_count = ? and difficulty_id = ?', 
+                                      @run.player_count,
+                                  @run.difficulty_id]).select('id, 
+                                  target_time').first
+    
     @total_leg_count = get_array_total(@leg_count, 'legendary_count')
 
     @avg_leg_count = @total_leg_count / @leg_count.count if @leg_count.count > 0
