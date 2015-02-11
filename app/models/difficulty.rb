@@ -12,5 +12,6 @@
 #  updated_at :datetime         not null
 #
 class Difficulty < ActiveRecord::Base
+  validates :name, presence: true
   has_many :runs
 end

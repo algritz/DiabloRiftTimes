@@ -11,4 +11,7 @@
 #
 
 class TargetTime < ActiveRecord::Base
+    validates :target_time, presence: true
+    validates :difficulty_id, presence: true
+    validates :player_count, presence: true
 end

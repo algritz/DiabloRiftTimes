@@ -7,7 +7,7 @@ class TargetTimesController < ApplicationController
   # GET /target_times
   # GET /target_times.json
   def index
-    @target_times = TargetTime.all
+    @target_times = TargetTime.all.order("player_count, difficulty_id")
   end
 
   # GET /target_times/1

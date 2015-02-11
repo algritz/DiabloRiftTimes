@@ -22,6 +22,11 @@
 #  updated_at                   :datetime         not null
 #
 class Run < ActiveRecord::Base
+  validates :duration, presence: true
+  validates :user_id, presence: true
+  validates :toon_id, presence: true
+  validates :difficulty_id, presence: true
+  validates :player_count, presence: true
   belongs_to :user
   belongs_to :toon
   has_one :difficulty

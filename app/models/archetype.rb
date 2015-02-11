@@ -12,5 +12,6 @@
 #  updated_at :datetime         not null
 #
 class Archetype < ActiveRecord::Base
+  validates :name, presence: true
   belongs_to :toon
 end
