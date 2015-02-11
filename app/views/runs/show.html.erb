@@ -65,7 +65,7 @@
 		<th>Average Blood Shard</th>
 	</tr>
 	<tr>
-		<td><%= humanize(@avg_duration) %></td>
+		<td class="<%= get_rating(@avg_duration, @target_time.target_time) %>"><%= humanize(@avg_duration) %></td>
 		<td><%= @avg_leg_count %></td>
 		<td><%= @avg_bs_count %></td>
 		<td></td>
@@ -103,7 +103,7 @@
 	</tr>
 	<% @duration.each do |run| %>
 	<tr>
-		<td><%= humanize(run.duration) %></td>
+		<td class="<%= get_rating(run.duration, @target_time.target_time) %>"><%= humanize(run.duration) %></td>
 		<td><%= run.legendary_count %></td>
 		<td><%= run.blood_shard_count %></td>
 		<td></td>
