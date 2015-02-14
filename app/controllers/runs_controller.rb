@@ -12,27 +12,32 @@ class RunsController < ApplicationController
     @toons = Toon.where(['user_id = ?', current_user.id]).select('id, name')
     @difficulties = Difficulty.all.order('id')
 
-    return @runs = Run.where(['user_id = ?',
+    return @runs = Run.paginate(:page => params[:page], :per_page => 20).where(
+                                                                 ['user_id = ?',
                               current_user.id]).order('difficulty_id desc,
                                 toon_id') if
                                 (params[:context].nil? ||
                                 params[:context].to_i == 0) &&
                                 (params[:difficulty].nil? ||
                                 params[:difficulty].to_i == 0)
-    return @runs = Run.where(['toon_id = ?',
-                              params[:context]]).order('difficulty_id desc') if
+    return @runs = Run.paginate(:page => params[:page], :per_page => 20).where(
+                                               ['toon_id = ?', params[:context]]
+               ).order('difficulty_id desc') if
                                (!params[:context].nil? &&
                                params[:context].to_i > 0) &&
                                (params[:difficulty].nil? ||
                                params[:difficulty].to_i == 0)
-    return @runs = Run.where(['toon_id = ? and difficulty_id = ?',
+    return @runs = Run.paginate(:page => params[:page], :per_page => 20).where(
+                                           ['toon_id = ? and difficulty_id = ?',
                               params[:context],
-                            params[:difficulty]]).order('difficulty_id desc') if
+                            params[:difficulty]]
+               ).order('difficulty_id desc') if
                             (!params[:context].nil? &&
                             params[:context].to_i > 0) &&
                             (!params[:difficulty].nil? ||
                             params[:difficulty].to_i > 0)
-    return @runs = Run.where(['user_id = ? and difficulty_id = ?',
+    return @runs = Run.paginate(:page => params[:page], :per_page => 20).where(
+                                           ['user_id = ? and difficulty_id = ?',
                               current_user.id,
                               params[:difficulty]]).order('difficulty_id desc,
                               toon_id') if
@@ -96,7 +101,17 @@ class RunsController < ApplicationController
     @total_time = get_array_total(@duration, 'duration')
 
     @avg_duration = @total_time / @duration.count
-
+    
+    @ready_for_next_difficulty = Run.where(['toon_id = ? and
+                                             difficulty_id = ? and
+                                             player_count = ? and
+                                             duration < ?',
+                                           @run.toon_id,
+                                           @run.difficulty_id,
+                                           @run.player_count,
+                                           @avg_duration
+                                           ]).count
+    
     @target_time = TargetTime.where(['player_count = ? and difficulty_id = ?',
                                      @run.player_count,
                                      @run.difficulty_id]).select('id,

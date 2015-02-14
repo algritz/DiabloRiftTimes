@@ -91,6 +91,12 @@
 		<td><%= @leg_per_hour_fc%> </td>
 		<td><%= @bs_per_hour_fc %></td>
 	</tr>
+	<tr>
+		<th colspan="7">Ready for next difficulty</th>
+	</tr>
+	<tr>
+		<td colspan="7"><%= ready?(@ready_for_next_difficulty) %></td>
+	</tr>
 </table>
 <br />
 <br />
